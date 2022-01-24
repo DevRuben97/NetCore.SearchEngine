@@ -16,7 +16,7 @@ namespace SearchEngine.Shared.Entity.Search
             private set { Count = value; }
         }
 
-        public bool IsReadOnly => throw new NotImplementedException();
+        public bool IsReadOnly => false;
 
         public SearchResultCollection()
         {

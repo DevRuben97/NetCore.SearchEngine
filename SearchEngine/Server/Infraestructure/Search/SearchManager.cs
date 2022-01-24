@@ -112,11 +112,28 @@ namespace SearchEngine.Server.Infraestructure.Search
 
             result = new SearchResultCollection(
                 hits.Where((x, i) => i > hitsStart && i < hitStop)
-                .Select(x => new SearchResult(searcher.Doc(x.Doc)))
+                .Select(x => new SearchResult(GetFieldsFromDocument(searcher.Doc(x.Doc))))
                 .ToList()
                 );
 
             return result;
+        }
+
+        /// <summary>
+        /// Get the values of the document
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <returns></returns>
+        private Dictionary<string, object> GetFieldsFromDocument(Document doc)
+        {
+            var fields = new Dictionary<string, object>();
+            foreach (var field in Searchable.FieldStrings)
+            {
+                var value = doc.GetField(field.Value).GetStringValue();
+                fields.Add(value, field.Key);
+            }
+
+            return fields;
         }
 
         private void UseWriter(Action<IndexWriter> action)

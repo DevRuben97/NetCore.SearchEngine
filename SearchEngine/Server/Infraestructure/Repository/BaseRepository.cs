@@ -47,7 +47,8 @@ namespace SearchEngine.Server.Infraestructure.Repository
         }
         public async Task<IEnumerable<T>> ListAsync()
         {
-            return await dbContext.Set<T>().ToListAsync();
+            var items=  await dbContext.Set<T>().ToListAsync();
+            return items;
         }
 
         public async Task<bool> UpdateAsync(T entity)

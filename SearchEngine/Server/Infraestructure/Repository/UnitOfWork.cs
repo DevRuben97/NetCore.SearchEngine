@@ -18,6 +18,7 @@ namespace SearchEngine.Server.Infraestructure.Repository
         public UnitOfWork(AppDbContext _appDbContext)
         {
             dbContext = _appDbContext;
+            Repositories = new Dictionary<Type, object>();
         }
 
         public async Task<int> CommitChanges()
@@ -36,11 +37,6 @@ namespace SearchEngine.Server.Infraestructure.Repository
             this.Repositories.Add(typeof(T), repo);
 
             return repo;
-        }
-
-        public IBaseRepository<object> GetRepository(Type type)
-        {
-            
         }
     }
 }

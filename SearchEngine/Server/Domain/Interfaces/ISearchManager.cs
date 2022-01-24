@@ -1,5 +1,6 @@
 ﻿using SearchEngine.Server.Domain.Base;
 using SearchEngine.Shared.Entity.Search;
+using SearchEngine.Shared.Enum.Search;
 using System;
 using System.Collections.Generic;
 using System.Linq;

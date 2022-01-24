@@ -10,7 +10,7 @@ namespace SearchEngine.Server.Domain
     {
         public int ClientId { get; set; }
 
-        public int Number { get; set; }
+        public string Number { get; set; }
 
         public decimal Amount { get; set; }
 

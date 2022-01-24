@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SearchEngine.Shared.Enum.Search
 {
-  public  enum SearchableTypes
+  public  enum SearchableType
     {
         Client,
         Invoices

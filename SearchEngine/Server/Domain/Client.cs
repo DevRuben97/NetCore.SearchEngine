@@ -21,12 +21,11 @@ namespace SearchEngine.Server.Domain
         {
             var title = $"{Name} {SurName}";
             return new Field[]
-           {
-              
+           {          
                new TextField(Searchable.AnalizedFields[SearchField.Description], title, Field.Store.NO),
                new TextField(Searchable.AnalizedFields[SearchField.Title], title, Field.Store.YES){Boost= 4.0f},
                new StringField(Searchable.AnalizedFields[SearchField.Id], Id.ToString(), Field.Store.YES),
-               new StringField(Searchable.AnalizedFields[SearchField.Number], Id.ToString(), Field.Store.YES)
+               new StringField(Searchable.AnalizedFields[SearchField.Number], Id.ToString(), Field.Store.YES),
            };
         }
     }

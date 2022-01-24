@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SearchEngine.Server.Application.Services;
+using SearchEngine.Server.Application.Services.Jobs;
+using SearchEngine.Server.Application.Services.Search;
 using SearchEngine.Server.Domain.Interfaces;
 using SearchEngine.Server.Infraestructure.DataAccess;
 using SearchEngine.Server.Infraestructure.Repository;
@@ -48,7 +50,13 @@ namespace SearchEngine.Server
             services.AddScoped(typeof(IBaseService<,>), typeof(BaseService<,>));
 
             //Add the search manager service:
-            services.AddScoped<ISearchManager, SearchManager>();
+            services.AddTransient<ISearchManager, SearchManager>();
+
+            //Search Service
+            services.AddScoped<ISearchService, SearchService>();
+
+            //Add the index service:
+            services.AddHostedService<SearchIndexerHostedService>();
 
         }
 

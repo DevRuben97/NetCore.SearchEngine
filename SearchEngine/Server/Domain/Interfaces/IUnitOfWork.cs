@@ -11,8 +11,6 @@ namespace SearchEngine.Server.Domain.Interfaces
 
         IBaseRepository<T> GetRepository<T>() where T : Entity;
 
-        IBaseRepository<object> GetRepository(Type type);
-
          Task<int> CommitChanges();
     }
 }
