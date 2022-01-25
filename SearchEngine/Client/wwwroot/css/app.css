@@ -2,6 +2,13 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #0793FF;
+    padding: 0 20px;
+}
+
+::selection{
+    color: #fff;
+    background: #664AFF;
 }
 
 a, .btn-link {

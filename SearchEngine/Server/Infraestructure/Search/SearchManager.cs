@@ -108,7 +108,7 @@ namespace SearchEngine.Server.Infraestructure.Search
             var searcher = new IndexSearcher(reader);
             var parser = new MultiFieldQueryParser(Lucene.Net.Util.LuceneVersion.LUCENE_48, fields, analyzer);
             var search = parser.Parse(QueryParserBase.Escape(query.Trim()));
-            var hits = searcher.Search(search, null, hitsLimit, Sort.RELEVANCE).ScoreDocs;
+            var hits = searcher.Search(search,null, hitsLimit, Sort.RELEVANCE).ScoreDocs;
 
             result = new SearchResultCollection(
                 hits.Where((x, i) => i > hitsStart && i < hitStop)

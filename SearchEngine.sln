@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30711.63
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchEngine.Server", "SearchEngine\Server\SearchEngine.Server.csproj", "{07E122E7-671B-48D2-B047-82289B200CC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchEngine.Server", "SearchEngine\Server\SearchEngine.Server.csproj", "{07E122E7-671B-48D2-B047-82289B200CC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchEngine.Client", "SearchEngine\Client\SearchEngine.Client.csproj", "{D8872931-060A-42F2-9E6B-C8A55A330458}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchEngine.Client", "SearchEngine\Client\SearchEngine.Client.csproj", "{D8872931-060A-42F2-9E6B-C8A55A330458}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchEngine.Shared", "SearchEngine\Shared\SearchEngine.Shared.csproj", "{3C5D64A6-149D-47BC-9A33-6E5457E66C8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchEngine.Shared", "SearchEngine\Shared\SearchEngine.Shared.csproj", "{3C5D64A6-149D-47BC-9A33-6E5457E66C8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

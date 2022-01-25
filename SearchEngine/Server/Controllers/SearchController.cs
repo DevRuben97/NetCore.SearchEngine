@@ -24,7 +24,7 @@ namespace SearchEngine.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Search([FromQuery] string query,int startIndex, int endIndex)
+        public async Task<IActionResult> Get([FromQuery] string query,int startIndex, int endIndex)
         {
             try
             {
