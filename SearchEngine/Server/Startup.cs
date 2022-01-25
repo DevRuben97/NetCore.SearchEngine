@@ -40,7 +40,7 @@ namespace SearchEngine.Server
             services.AddRazorPages();
 
             //Db context:
-            services.AddDbContext<AppDbContext>();
+            services.AddDbContext<AppDbContext>(ServiceLifetime.Scoped);
 
             //Add the unit of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();

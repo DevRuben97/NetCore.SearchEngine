@@ -26,6 +26,12 @@ namespace SearchEngine.Server.Infraestructure.Repository
            return await this.dbContext.SaveChangesAsync();
         }
 
+        public void Dispose()
+        {
+           this.dbContext.Dispose();
+            this.Repositories.Clear();
+        }
+
         public IBaseRepository<T> GetRepository<T>() where T : Entity
         {
             if (this.Repositories.ContainsKey(typeof(T)))

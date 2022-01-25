@@ -18,40 +18,9 @@ namespace SearchEngine.Server.Application.Services.Jobs
 
         IServiceProvider serviceProvider;
 
-        private static ISearchManager _searchManager;
-
-        private IUnitOfWork _unitOfWork;
-
         public SearchIndexerHostedService(IServiceProvider _serviceProvider)
         {
             serviceProvider = _serviceProvider;
-        }
-
-        private ISearchManager GetSearchManager()
-        {
-            if (_searchManager != null)
-            {
-                return _searchManager;
-            }
-
-            using var scope = serviceProvider.CreateScope();
-            var manager = scope.ServiceProvider.GetRequiredService<ISearchManager>();
-
-            return _searchManager = manager;
-
-        }
-
-        private IUnitOfWork GetUnitOfWork()
-        {
-            if(_unitOfWork!= null)
-            {
-                return _unitOfWork;
-            }
-
-            using var scope = serviceProvider.CreateScope();
-            var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-
-            return _unitOfWork = unitOfWork;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -75,8 +44,9 @@ namespace SearchEngine.Server.Application.Services.Jobs
 
         public async void Execute(object obj)
         {
-            var searchManager = GetSearchManager();
-            var unitOfWork = GetUnitOfWork();
+            using var scope = serviceProvider.CreateScope();
+            var unitOfWork= scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+            var searchManager= scope.ServiceProvider.GetService<ISearchManager>();
 
             //Get all Search entities of the assembly:
             var searchables = typeof(ISearchable).Assembly.ExportedTypes.Where(s => typeof(ISearchable).IsAssignableFrom(s) && !s.IsInterface && !s.IsAbstract)
@@ -99,12 +69,10 @@ namespace SearchEngine.Server.Application.Services.Jobs
 
                 await task.ConfigureAwait(false);
 
-                var result = task.GetType().GetProperty("Result")
+                var result = (IEnumerable) task.GetType().GetProperty("Result")
                     .GetValue(task, null);
 
-                var items= (IEnumerable)result;
-
-                //searchManager.AddToIndex(items.Select(x => (ISearchable)x).ToArray());
+                searchManager.AddToIndex(result.Cast<ISearchable>().ToArray());
             }
                 
             

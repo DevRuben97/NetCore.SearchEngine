@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SearchEngine.Server.Domain.Interfaces
 {
-   public interface IUnitOfWork
+   public interface IUnitOfWork: IDisposable
     {
 
         IBaseRepository<T> GetRepository<T>() where T : Entity;
