@@ -9,7 +9,7 @@ namespace SearchEngine.Shared.Entity.Search
     /// <summary>
     /// Entity used for the result of the query
     /// </summary>
-    public class Search
+    public class SearchResponse
     {
         public SearchResultCollection Results { get; set; }
 

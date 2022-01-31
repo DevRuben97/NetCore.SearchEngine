@@ -8,16 +8,26 @@ using System.Threading.Tasks;
 
 namespace SearchEngine.Shared.Entity.Search
 {
-   public class SearchResult
+    public class SearchResult
     {
         /// <summary>
         /// The properties of the result:
         /// </summary>
-        private Dictionary<string,object> _properties;
+        /// 
+        public List<SearchResultValue> Properties { get;  set; }
 
-        public SearchResult(Dictionary<string,object> values)
+        public SearchResult()
         {
-            
+            Properties = new List<SearchResultValue>();
+        }
+
+        public SearchResult(Dictionary<string,string> values)
+        {
+            Properties = values.Select(x => new SearchResultValue
+            {
+                Property = x.Key,
+                Value = x.Value
+            }).ToList();
         }
 
         /// <summary>
@@ -25,15 +35,27 @@ namespace SearchEngine.Shared.Entity.Search
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
-        public object GetValue<T>(SearchField field) where T : class
+        public T GetValue<T>(SearchField field)
         {
-            var value = _properties
-                .Where(x=> x.Key== System.Enum.GetName(typeof(SearchField), (int) field))
+            var value = Properties
+                .Where(x => x.Property == System.Enum.GetName(typeof(SearchField), (int)field))
+                .Select(x => x.Value)
                 .FirstOrDefault();
 
-            return Convert.ChangeType(value,typeof(T));
+
+            return (T) Convert.ChangeType(value,typeof(T));
         }
 
+        /// <summary>
+        /// Get the type of the result:
+        /// </summary>
+        /// <returns></returns>
+        public string GetTypeName()
+        {
+            var type = GetValue<int>(SearchField.Type);
+
+            return System.Enum.GetName(typeof(SearchableType),type);
+        }
 
 
     }

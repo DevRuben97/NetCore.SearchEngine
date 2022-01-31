@@ -22,11 +22,7 @@ namespace SearchEngine.Server.Domain.Base
 
         public static readonly Dictionary<SearchField, string> AnalizedFields = new Dictionary<SearchField, string>
         {
-            {SearchField.Id, "Id" },
-            {SearchField.Number, "Number" } ,
             {SearchField.Title, "Title" },
-            {SearchField.Description, "Description" },
-            {SearchField.Type, "Type"}
         };
 
         public virtual IEnumerable<Field> GetFields()

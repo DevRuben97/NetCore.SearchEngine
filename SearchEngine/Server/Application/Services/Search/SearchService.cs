@@ -17,7 +17,7 @@ namespace SearchEngine.Server.Application.Services.Search
 
         public SearchResultCollection Search(string query, int startIndex, int endIndex)
         {
-            return this._searchManager.Search(query, startIndex, endIndex, Searchable.FieldStrings.Values.ToArray());
+            return this._searchManager.Search(query, startIndex, endIndex, Searchable.AnalizedFields.Values.ToArray());
         }
     }
 }

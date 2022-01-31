@@ -1,9 +1,11 @@
-﻿using Lucene.Net.Analysis.Standard;
+﻿using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using SearchEngine.Server.Domain.Base;
@@ -11,6 +13,7 @@ using SearchEngine.Server.Domain.Interfaces;
 using SearchEngine.Shared.Entity.Search;
 using SearchEngine.Shared.Enum.Search;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,12 +29,20 @@ namespace SearchEngine.Server.Infraestructure.Search
 
         private static FSDirectory _directory;
 
+        private readonly Analyzer analyzer;
+
+        private ConcurrentDictionary<string, Query> chacheQuery;
+
+        private LuceneVersion _luceneVersion = LuceneVersion.LUCENE_48;
+
         private string indexDirectory => Path.Combine(hostEnvironment.ContentRootPath, "Lucene_Index");
 
         public SearchManager(ILogger<SearchManager>_logger, IWebHostEnvironment _hostEnvironment)
         {
             logger = _logger;
             hostEnvironment = _hostEnvironment;
+            analyzer = new StandardAnalyzer(_luceneVersion);
+            chacheQuery = new ConcurrentDictionary<string, Query>();
         }
 
         private FSDirectory Directory
@@ -60,20 +71,25 @@ namespace SearchEngine.Server.Infraestructure.Search
       
         public void AddToIndex(params ISearchable[] searchables)
         {
-            DeleteFromIndex(searchables);
-
-            UseWriter(s =>
+           if (searchables.Length > 0)
             {
-                foreach (var searchable in searchables)
+                DeleteFromIndex(searchables);
+
+                UseWriter(s =>
                 {
-                    var doc = new Document();
-                    foreach (var field in searchable.GetFields())
+                    foreach (var searchable in searchables)
                     {
-                        doc.Add(field);
+                        var doc = new Document();
+                        foreach (var field in searchable.GetFields())
+                        {
+                            doc.Add(field);
+                        }
+                        s.AddDocument(doc);
                     }
-                    s.AddDocument(doc);
-                }
-            });
+                });
+
+                logger.LogInformation("a total of {0} documents was indexed at {1}", searchables.Length,DateTime.UtcNow);
+            }
         }
 
         public void Clear()
@@ -103,12 +119,17 @@ namespace SearchEngine.Server.Infraestructure.Search
             const int hitsLimit = 100;
             SearchResultCollection result;
 
-            using var analyzer = new StandardAnalyzer(Lucene.Net.Util.LuceneVersion.LUCENE_48);
+            //using var analyzer = new StandardAnalyzer(_luceneVersion);
             using var reader = DirectoryReader.Open(Directory);
             var searcher = new IndexSearcher(reader);
-            var parser = new MultiFieldQueryParser(Lucene.Net.Util.LuceneVersion.LUCENE_48, fields, analyzer);
-            var search = parser.Parse(QueryParserBase.Escape(query.Trim()));
-            var hits = searcher.Search(search,null, hitsLimit, Sort.RELEVANCE).ScoreDocs;
+
+            var expression = new MultiPhraseQuery();
+
+            query.Split(' ').ToList()
+                .ForEach(x=> expression.Add(new Term("Description", x.ToLower())));
+            
+
+            var hits = searcher.Search(expression,null, hitsLimit, Sort.RELEVANCE).ScoreDocs;
 
             result = new SearchResultCollection(
                 hits.Where((x, i) => i > hitsStart && i < hitStop)
@@ -124,13 +145,13 @@ namespace SearchEngine.Server.Infraestructure.Search
         /// </summary>
         /// <param name="doc"></param>
         /// <returns></returns>
-        private Dictionary<string, object> GetFieldsFromDocument(Document doc)
+        private Dictionary<string, string> GetFieldsFromDocument(Document doc)
         {
-            var fields = new Dictionary<string, object>();
+            var fields = new Dictionary<string, string>();
             foreach (var field in Searchable.FieldStrings)
             {
-                var value = doc.GetField(field.Value).GetStringValue();
-                fields.Add(value, field.Key);
+                var propValue = doc.GetField(field.Value).GetStringValue();
+                fields.Add(field.Value, propValue);
             }
 
             return fields;
@@ -138,8 +159,7 @@ namespace SearchEngine.Server.Infraestructure.Search
 
         private void UseWriter(Action<IndexWriter> action)
         {
-            using var analyzer = new StandardAnalyzer(Lucene.Net.Util.LuceneVersion.LUCENE_48);
-            using var writer= new IndexWriter(Directory, new IndexWriterConfig(Lucene.Net.Util.LuceneVersion.LUCENE_48, analyzer));
+            using var writer= new IndexWriter(Directory, new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer));
 
             action(writer);
             writer.Commit();

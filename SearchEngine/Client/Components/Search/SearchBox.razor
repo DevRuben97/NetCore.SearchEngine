@@ -1,15 +1,31 @@
 ﻿@using SearchEngine.Shared.Entity.Search;
 
  <div class="wrapper">
-      <div class="search-input">
+      <div class="search-input @(IsDropdownVisible? "active": "")">
         <a href="" target="_blank" hidden></a>
-        <input type="text" placeholder="Type to search.."
+        <input 
+        type="text" 
+        placeholder="Type to search.. or press Ctrl + Q" 
+        @onfocus="OnGetFocusHandler" 
+        @onblur="OnLoseFofusHanlder"
         @oninput="(ChangeEventArgs args)=> OnChangeInputValueHanlder(args.Value.ToString())">
-        <div class="autocom-box">
-          <!-- here list are inserted from javascript -->
+
+        <div class="autocom-box" style="display: @(IsDropdownVisible? "block": "none")">
+          <div class="help_keys_container">
+              <span >
+                  <kbd>&darr;</kbd>
+                  <kbd>&uarr;</kbd>
+                  Press to navigate
+              </span>
+              <span>
+                  <kbd>&crarr;</kbd>
+                  To Select
+              </span>
+          </div>
+          <!-- Suggestion items -->
           @RenderSuggestions()
         </div>
-        <div class="icon"><i class="fas fa-search"></i></div>
+        <div  class="icon"><i class="fas fa-search"></i></div>
       </div>
  </div>
 
@@ -51,6 +67,10 @@
   opacity: 1;
   pointer-events: auto;
 }
+.autocom-box i{
+    margin-right: 12px;
+}
+
 .autocom-box li{
   list-style: none;
   padding: 8px 12px;
@@ -76,5 +96,28 @@
   font-size: 20px;
   color: #644bff;
   cursor: pointer;
+}
+.result_group_header{
+    padding: 6px;
+    border-bottom: 1px solid;
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.help_keys_container{
+    display: flex;
+    width: 100%;
+    padding: 6px;
+}
+ .help_keys_container span{
+     margin-right: 25px;
+ }
+ kbd {
+    padding: .2rem .4rem;
+    font-size: 87.5%;
+    color: #fff;
+    background-color: #212529;
+    border-radius: .2rem;
 }
 </style>
