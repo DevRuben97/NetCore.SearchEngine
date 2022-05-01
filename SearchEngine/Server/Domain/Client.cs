@@ -23,7 +23,7 @@ namespace SearchEngine.Server.Domain
             return new Field[]
            {          
                new TextField(Searchable.FieldStrings[SearchField.Description], title, Field.Store.YES),
-               new StringField(Searchable.FieldStrings[SearchField.Title], title, Field.Store.YES),
+               new TextField(Searchable.FieldStrings[SearchField.Title], title, Field.Store.YES),
                new StringField(Searchable.FieldStrings[SearchField.Id], Id.ToString(), Field.Store.YES),
                new StringField(Searchable.FieldStrings[SearchField.Number], Id.ToString(), Field.Store.YES),
                new StringField(Searchable.FieldStrings[SearchField.Type],((int) SearchableType.Client).ToString(),Field.Store.YES)

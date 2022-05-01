@@ -123,13 +123,15 @@ namespace SearchEngine.Server.Infraestructure.Search
             using var reader = DirectoryReader.Open(Directory);
             var searcher = new IndexSearcher(reader);
 
+            var queryParser = new QueryParser(LuceneVersion.LUCENE_48, Searchable.FieldStrings[SearchField.Description],new StandardAnalyzer(LuceneVersion.LUCENE_48));
             var expression = new MultiPhraseQuery();
 
-            query.Split(' ').ToList()
-                .ForEach(x=> expression.Add(new Term("Description", x.ToLower())));
-            
+            //query.Split(' ').ToList()
+            //    .ForEach(x=> expression.Add(new Term("Description", x.ToLower())));
 
-            var hits = searcher.Search(expression,null, hitsLimit, Sort.RELEVANCE).ScoreDocs;
+            var searchQuery = queryParser.Parse(query);
+
+            var hits = searcher.Search(searchQuery,null, hitsLimit, Sort.RELEVANCE).ScoreDocs;
 
             result = new SearchResultCollection(
                 hits.Where((x, i) => i > hitsStart && i < hitStop)
